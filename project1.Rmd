@@ -4,262 +4,225 @@ author: "Alden Swain"
 date: "2023-10-05"
 output: html_document
 ---
-```{r}
-library(ggplot2)
-stone <- read.csv("diamonds4.csv", header=TRUE)
-```
-```{r}
-stone$cut <- factor(stone$cut, levels=c('Astor Ideal', 'Ideal', 'Very Good', 'Good'))
-stone$clarity <- factor(stone$clarity, levels=c('FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2'))
-stone$color <- factor(stone$color, levels=c('D', 'E', 'F', 'G', 'H', 'I', 'J'))
-```
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
-Overall summary of the data visualizations related to price. I think that the graphs that involve the 3 variables: x=carat, y=price, and color=other categorical group: are the best visual representations of the data. Carat weight seems to have the most direct impact on price, so these types of visualizations are helpful to see how the color, clarity, and cut related to carat weights. In terms of the individual predictors against the price, I think the most significant impacts in order are: Carat, Color, Cut, Clarity. I think the latter 2 are much less impactful than the other 2.
-
-```{r}
-ggplot(stone, aes(x=carat, y=price)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +
-  labs(x="Carat", y="Price", title="Carat Weight Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-It appears that as carat weight increases, the price also increases. Particularly large jump in price once you get around 3 carat. Positive linear relationship.
-```{r}
-ggplot(stone, aes(x=carat, y=price, color=cut)) +
-  geom_point() +
-  labs(x="Carat Weight", y="Price", title="Carat and Cut Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5)) +
-  scale_color_manual(values = c("Astor Ideal" = "violet", "Ideal" = "blue", "Very Good" = "green", "Good" = "maroon"))
-```
-
-The cut does not appear to have a big an impact on price as carat. The Astor Ideal is the highest quality but is grouped among other cut types with similar carat. Good is the lowest cut quality and is more expensive than some other cut types of higher quality.
-
-```{r}
-ggplot(stone, aes(x=carat, y=price, color=color)) +
-  geom_point() +
-  labs(x="Carat Weight", y="Price", title="Carat and Color Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-It does appear that color has some effect on price, but still not as much as carat weight does. Note: highest quality color is D and the lowest is J.
-
-```{r}
-ggplot(stone, aes(x=carat, y=price, color=clarity)) +
-  geom_point() +
-  labs(x="Carat Weight", y="Price", title="Carat and Clarity Effect on Price") + theme(plot.title=element_text(hjust=0.5)) +
-  scale_color_manual(values = c("FL" = "gray", "IF" = "red", "VVS1" = "green", "VVS2" = "green", "VS1" = "blue", "VS2" = "blue", "SI1" = "orange", "SI2" = "orange"))
-```
-
-
-```{r}
-ggplot(stone, aes(x=cut, y=price)) +
-  geom_violin() +
-  labs(x="Cut Type", y="Price", title="Cut Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-```{r}
-ggplot(stone, aes(x=clarity)) +
-  geom_bar() +
-  labs(x="Clarity Type", y="Count", title="Number of Diamonds of Each Clarity Type")
-```
-
-
-```{r}
-ggplot(stone, aes(x = cut)) + geom_bar() +
-  labs(title="Number of Diamonds per Cut Type")
-```
-
-
-I don't think this graph is helpful, the one above with carat, price, cut is a better representation, I think.
-```{r}
-ggplot(stone, aes(x=clarity, y=price)) +
-  geom_violin() +
-  labs(x="Clarity", y="Price", title="Clarity Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-Clarity does not seem to have a significant impact on price either. FL is the highest quality and clearly is the most expensive, but IF (2nd highest) is similar in prices to SI2 (2nd lowest).
-
-```{r}
-ggplot(stone, aes(x=color, y=price)) +
-  geom_violin() +
-  labs(x="Color", y="Price", title="Color Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-I'd say that color has the most direct impact on price after carat. As quality of the color drops (from left to right) the price also decreases. There may be a few outliers in H that make the 3rd quartile spike slightly.
-
-
-## All graphs above this point are in relation to the reponse variable, price.
-#### Now focus will shift to relation among predictors
-Summary of below graphs: None of the other predictors seemed to relate much to carat individually (cut was maybe the most significant). In relation to cut, clarity seems to have positive linear relationship, while color seems to have no relationship. Color and clarity do not seem to have a relationship.
-```{r}
-ggplot(stone, aes(x=color, y=carat)) +
-  geom_boxplot() +
-  labs(x="Color", y="Carat Weight", title="Relating Carat to Color") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-Does not seem to be much difference in color relative to carat.
-```{r}
-ggplot(stone, aes(x=cut, y=carat)) +
-  geom_boxplot() +
-  labs(x="Cut", y="Carat Weight", title="Relating Carat to Cut") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-Again, not much significance in cut related to carat. Maybe a slight decrease in carat as the cut quality decreases.
-```{r}
-ggplot(stone, aes(x=clarity, y=carat)) +
-  geom_boxplot() +
-  labs(x="Clarity", y="Carat", title="Relating Clarity to Carat") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-### Done with carat
-
-```{r}
-ggplot(stone, aes(x=cut, fill=clarity)) +
-  geom_bar(position = "fill") +
-  labs(x="Cut", y="Proportion", title="Relating Clarity to Cut") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-There seems to be a slight increase in the general quality of the clarity as the cut quality increases.
-```{r}
-ggplot(stone, aes(x=cut, fill=color)) +
-  geom_bar(position = "fill") +
-  labs(x="Cut", y="Proportion", title="Relating Color to Cut") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-Fairly even split among color distribution at each cut designation.
-
-### Done with cut
-
-```{r}
-ggplot(stone, aes(x=color, fill=clarity)) +
-  geom_bar(position = "fill") +
-  labs(x="Color", y="Proportion", title="Relating Clarity to Color") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-
-Seems to have an even distribution of color to clarity. No significant relationship.
-
-## Graphs above this point are all 1-1 relationships of predictors
-### Now will try 3 predictors together
-
-Summary of below:
-
-```{r}
-ggplot(stone, aes(x=cut, y=carat, fill=as.factor(color)))+
-  geom_boxplot()+
-  labs(x="Cut", y="Carat Weight",
-       title="Carat Weight By Color and Cut")
-```
-```{r}
-ggplot(stone, aes(x=cut, y=carat, fill=as.factor(clarity)))+
-  geom_boxplot()+
-  labs(x="Cut", y="Carat Weight",
-       title="Carat Weight By Cut and Clarity")
-```
-```{r}
-ggplot(stone, aes(x=color, y=carat, fill=as.factor(clarity)))+
-  geom_boxplot()+
-  labs(x="Color", y="Carat Weight",
-       title="Carat Weight By Color and Clarity")
-```
-
-## Done with all quantitative variable graphs
-### Will now try the 1 with all 3 categoricals
-
-```{r}
-ggplot(stone, aes(x=clarity, fill=color)) +
-  geom_bar(position="fill") +
-  labs(x="Clarity", y="Proportion", title="Dist of Clarity and Color by Cut") +
-  facet_wrap(~cut) +
-  scale_fill_brewer(palette = "Paired") +
-  theme(axis.text.x = element_text(angle = 30))
-```
-```{r}
-ggplot(stone, aes(x=cut, fill=clarity)) +
-  geom_bar(position="fill") +
-  labs(x="Cut", y="Proportion", title="Dist of Clarity and Cut by Color") +
-  facet_wrap(~color) +
-  theme(axis.text.x = element_text(angle=90))
-```
-```{r}
-ggplot(stone, aes(x=cut, fill=color)) +
-  geom_bar(position="fill") +
-  labs(x="Cut", y="Proportion", title="Dist of Color and Cut by Clarity") +
-  facet_wrap(~clarity) +
-  scale_fill_brewer(palette = "Paired") +
-  theme(axis.text.x = element_text(angle = 90))
-```
-
-## Linear model for price against carat
-```{r}
-ggplot(stone, aes(x=carat, y=price)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +
-  labs(x="Carat", y="Price", title="Carat Weight Effect on Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-```{r}
-model <- lm(price~carat, data=stone)
-par(mfrow=c(2,2))
-plot(model)
-```
-
-As we see from the 2 above plots, assumption 1 is not met because the red line on the residual plot is not approximate to the dotted line. Assuption 2 is not met because the vertical spread increases from left to right. Since 1 and 2 are not met, will start with transformation of y.
-```{r}
 library(MASS)
-boxcox(model, lambda = seq(0.2, 0.5, .05))
+library(ggplot2)
+library(tidyverse)
 ```
 
-Need to use 0.3 as the value for lambda for the transformation
 ```{r}
-ystar <- (stone$price)^0.3
-#stone <- data.frame(stone, ystar)
-```
-Commented out second line because if I run again, it would add a ystar column again. All values of price were raised to the power of 0.3 for the y transformation.
-```{r}
-model.ystar <- lm(ystar~carat, data=stone)
-par(mfrow=c(2,2))
-plot(model.ystar)
-```
+# Read data in
+diamonds = read.csv("diamonds4.csv")
 
-I'd say vertical spread is consistent now so assumption 2 is met but the red line still does not follow the dotted line, therefore assumption 1 is still not met.
-```{r}
-ggplot(stone, aes(x=carat, y=ystar)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +
-  labs(x="Carat", y="Transformed Price", title="Carat Weight Effect on Adjusted Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
+# Refactor the variables to be in categorical order
+diamonds$cut <- factor(diamonds$cut, levels=c('Astor Ideal', 'Ideal', 'Very Good', 'Good'))
+diamonds$clarity <-factor(diamonds$clarity, levels=c('FL', 'IF', 'VVS1', 'VVS2', 'VS1', 'VS2', 'SI1', 'SI2')) 
+diamonds$color <- factor(diamonds$color, levels=c('D', 'E', 'F', 'G', 'H', 'I', 'J'))
 
-Shape of the data looks like a log shape, so I will do that kind of x transformation. Log did not look better, looked worse so removed log xstar and replaced with sqrt (similar shape).
-```{r}
-xstar <- sqrt(stone$carat)
-#stone <- data.frame(stone, xstar)
-```
-```{r}
-model.xstar <- lm(ystar~xstar, data=stone)
-par(mfrow=c(2,2))
-plot(model.xstar)
-```
+# Graph for carat effect on price
+ggplot(diamonds, aes(x=carat, y=price)) + 
+geom_point() + 
+geom_smooth(method="lm", se=FALSE) + 
+labs(x="Carat", y="Price", title="Carat Effect on Price") + 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
 
-I think that the red line matches dotted well so assumption 1 is met. The vertical spread may be increasing from left to right, so assumption 2 is not.
-```{r}
-ggplot(stone, aes(x=xstar, y=ystar)) +
-  geom_point() +
-  geom_smooth(method="lm", se=FALSE) +
-  labs(x="Transformed Carat", y="Transformed Price", title="Adjusted Carat Weight Effect on Adjusted Price") +
-  theme(plot.title=element_text(hjust=0.5))
-```
-```{r}
-summary(model.xstar)
+
+# Color effect on price
+ggplot(diamonds, aes(x=color, y=price)) + 
+geom_violin() + 
+labs(x="Color", y="Price", title="Color Effect on Price") + 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+ggplot(diamonds, aes(x=carat, y=price, color=color)) + 
+geom_point() + 
+labs(x="Carat", y="Price", title="Carat and Color Effect on Price", color = "Color") + theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+
+ggplot(diamonds, aes(x=carat, y=price, col=color)) + 
+geom_smooth(se=F) + 
+labs(title = 'Price by Carat and Color', x = "Carat", y = "Price", color = "Color")+ 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+
+
+
+
+
+ggplot(diamonds, aes(x=clarity, y=price)) + 
+geom_violin() + 
+labs(x="Clarity", y="Price", title="Clarity Effect on Price") + 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+newdiamonds <- diamonds %>%
+  group_by(clarity) %>%
+  summarize(Count = n())
+
+ggplot(newdiamonds, aes(x = clarity, y = Count)) + 
+geom_col() + 
+labs(title="Number of Diamonds by Clarity", x = "Clarity", y = "Count")+ 
+  geom_text(aes(label = Count, y = Count+10)) +
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+
+
+
+ggplot(diamonds, aes(x=carat, y=price, col=clarity)) +
+geom_smooth(se=F) +
+labs(title ='Price by Carat and Clarity', x ="Carat", color = "Clarity", y= "Price") +
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+ggplot(diamonds, aes(x=cut, y=price)) + 
+geom_violin() + 
+labs(x="Cut", y="Price", title="Cut Effect on Price") + 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+ggplot(diamonds, aes(x=clarity, fill=color)) + 
+geom_bar(position="fill") + 
+labs(x="Clarity", y="Proportion", title="Dist of Clarity and Color by Cut") + 
+facet_wrap(~cut) + 
+scale_fill_brewer(palette = "Paired") + 
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15),
+      axis.text.x = element_text(angle = 30))
+
+
+
+
+
+newdiamonds2 <- diamonds %>%
+  group_by(cut) %>%
+  summarize(Count = n())
+
+ggplot(newdiamonds2, aes(x = cut, y = Count)) + 
+geom_col() + 
+labs(title="Number of Diamonds by Cut", x = "Cut", y = "Count")+ 
+  geom_text(aes(label = Count, y = Count+20)) +
+theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + 
+  geom_point() + 
+  labs(x="Carat", y="Price", title="Carat and Cut Effect on Price", color = "Cut") + 
+  theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15)) +
+  scale_color_manual(values = c("Astor Ideal" = "violet", "Ideal" = "blue", "Very Good" = "green", "Good" = "maroon"))
+
+
+
+ggplot(diamonds, aes(x=color, fill=clarity)) + 
+  geom_bar(position = "fill") + 
+  labs(x="Color", y="Proportion",fill = "Clarity", title="Relating Clarity to Color") +   theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15))
+
+
+
+
+ggplot(diamonds, aes(x=carat, y=price, color=clarity)) + 
+  geom_point() + 
+  labs(x="Carat", y="Price", color = "Clarity", title="Carat and Clarity Effect on Price") + theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15)) + scale_color_manual(values = c("FL" = "gray", "IF" = "red", "VVS1" = "green", "VVS2" = "green", "VS1" = "blue", "VS2" = "blue", "SI1" = "orange", "SI2" = "orange"))
+
+
+
+ggplot(diamonds, aes(x=carat, y=price)) + 
+geom_point() + 
+geom_smooth(se = F) + 
+labs(title = 'Carat Effect on Price', x = "Carat", y = "Price") +
+  theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15)) 
+
+reg_standard <- lm(price~carat, data = diamonds) 
+par(mfrow=c(2, 2)) 
+plot(reg_standard, which = 1)
+
+
+
+
+
+
+boxcox(reg_standard,  lambda = seq(-1, 1, .1))
+
+
+log_price <- lm(log(price)~carat, data = diamonds) 
+plot(log_price, which = 1)
+
+ 
+ggplot(diamonds, aes(x=carat, y=log(price))) + 
+geom_point() + 
+geom_smooth(method = 'lm',se = F) + 
+labs(title = 'Carat Effect on log(Price)',
+     x = "Carat",
+     y = "log(Price)")+
+  theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15)) 
+
+
+
+
+ggplot(diamonds, aes(x=log(carat), y=log(price))) + 
+geom_point() + 
+geom_smooth(method = 'lm',se = F) + 
+labs(title = 'log(Carat) Effect on log(Price)', x = "log(Carat)", y = "log(Price") +
+    theme(plot.title=element_text(hjust=0.5), 
+      axis.title.x = element_text(size = 15),
+      axis.title.y = element_text(size = 15),
+      title = element_text(size = 15)) 
+
+
+reg <- lm(log(price)~log(carat), data = diamonds)
+par(mfrow=c(2, 2)) 
+plot(reg)
+
+
+acf(reg$residuals, main="ACF Plot of Residuals with Y*")
+
+
 ```
 
